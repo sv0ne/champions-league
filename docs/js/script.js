@@ -13,6 +13,41 @@ $(document).ready(function () {
 	
 	let standings, matches;
 
+	// Выбрать данные. Получить удаленно или из localStorage если данным еще не устарели (не прошло минуты с последнего обновления)
+	(function () {
+		const currentTimeString = new Date().toISOString();
+		let lastUpdate = localStorage.getItem('champions-league-last-update') || "2024-01-01T00:00:00.000Z";
+
+		// Если прошло боль минуты с последнего обновления данных то обновляем их
+		if(hasMoreThanOneMinutePassed(lastUpdate, currentTimeString)){
+			console.log("Обновляем данные");
+
+			localStorage.setItem('champions-league-last-update', currentTimeString);
+		}else{
+			console.log("Данные актуальны");
+		}
+	})();
+	
+	// Получить данные
+	function getData() {
+		$.ajax({
+			url: "https://api.football-data.org/v4/competitions/CL/standings",
+			type: "GET",
+			headers: {
+			  "X-Auth-Token": "1af6b2bbc6764d878e86fe68363807f6"
+			},
+			success: function(response) {
+			  // Обработка успешного ответа
+			  console.log(response);
+			},
+			error: function(xhr, status, error) {
+			  // Обработка ошибки
+			  console.error("Ошибка запроса:", status, error);
+			}
+		});
+	}
+	getData();
+
 	$.get("js/standings.json", (response) => {
 		standings = response;
 		createTable();
@@ -22,6 +57,22 @@ $(document).ready(function () {
 		matches = response;
 		createTable();
 	});
+
+	// Смотрим если между 2-мя датами прошло больше минуты
+	function hasMoreThanOneMinutePassed(dateStr1, dateStr2) {
+		// Преобразуем строки в объекты Date
+		const date1 = new Date(dateStr1);
+		const date2 = new Date(dateStr2);
+	  
+		// Вычисляем разницу в миллисекундах
+		const differenceMs = Math.abs(date2 - date1);
+	  
+		// Преобразуем миллисекунды в минуты
+		const differenceMinutes = differenceMs / (1000 * 60);
+	  
+		// Проверяем, больше ли разница одной минуты
+		return differenceMinutes > 1;
+	}
 
 	// Для каждой команды создаем массив в котором расположеены ее 8 матчей
 	function sortGridData(){
@@ -93,6 +144,15 @@ $(document).ready(function () {
 						(playTo === "away" && winner === "HOME_TEAM")) ? "lost" : null;
 	}
 
+	/** Текст под противником. Время матча или счет */
+	function detectTextOpponent(scoreStatus, formatedDate, winner, scoreHome, scoreAway) {
+		return scoreStatus === null ? `${formatedDate.date} ${formatedDate.time}` : 
+			scoreStatus === "draw" ? `${scoreHome} : ${scoreAway}` :
+			((scoreStatus === "win" && winner === "HOME_TEAM") || 
+				(scoreStatus === "lost" && winner === "AWAY_TEAM")) ? `${scoreHome} : ${scoreAway}` :
+			`${scoreAway} : ${scoreHome}`;
+	}
+
 	// Создаем таблицу с данными
 	function createTable() {
 		if(!standings || !matches) { return; } // Не выполняем функцию если данных еще нет
@@ -135,15 +195,10 @@ $(document).ready(function () {
 			for (let r = 0; r < arr.length; r++) {
 				// Форматируем дату в нужный формат
 				let formatedDate = formatDate(arr[r].utcDate);
-				// Статус матча. Выигран, проигран, ничья
+				// Статус матча. Выигран - "win", проигран - "lost", ничья - "draw", еще не начался - null
 				let scoreStatus = statusScoreMatch(arr[r].playTo, arr[r].score.winner);
-
-				let info = scoreStatus === "draw" ? `${arr[r].score.fullTime.home} : ${arr[r].score.fullTime.away}` :
-					scoreStatus === "win" && arr[r].score.winner === "HOME_TEAM" ? `${arr[r].score.fullTime.home} : ${arr[r].score.fullTime.away}` :
-					scoreStatus === "win" && arr[r].score.winner === "AWAY_TEAM" ? `${arr[r].score.fullTime.away} : ${arr[r].score.fullTime.home}` :
-					scoreStatus === "lost" && arr[r].score.winner === "HOME_TEAM" ? `${arr[r].score.fullTime.away} : ${arr[r].score.fullTime.home}` :
-					scoreStatus === "lost" && arr[r].score.winner === "AWAY_TEAM" ? `${arr[r].score.fullTime.home} : ${arr[r].score.fullTime.away}` :
-					`${formatedDate.date} ${formatedDate.time}`;
+				// Текст под противником. Время матча или счет
+				let textOpponent = detectTextOpponent(scoreStatus, formatedDate, arr[r].score.winner, arr[r].score.fullTime.home, arr[r].score.fullTime.away);
 				
 				// Ячейка с противостоянием (противником)
 				let td = `
@@ -155,7 +210,7 @@ $(document).ready(function () {
 							</div>
 							<div class="teamRival__info">
 								<div class="teamRival__isLive" data-description="Match online"></div>
-								${info}
+								${textOpponent}
 							</div>
 						</div>
 						<div class="teamRival__homeMatchIcon" data-description="Home arena"></div>
@@ -174,7 +229,6 @@ $(document).ready(function () {
 						<span class="team__position ${posClass}">${i+1}</span>
 						<img class="team__logo" src="${tableStandings[i].team.crest}" alt="Logo ${tableStandings[i].team.shortName}">
 						${tableStandings[i].team.shortName}
-						${tableStandings[i].team.id}
 					</th>
 					<td class="team_withLive">${tableStandings[i].playedGames}</td>
 					<td class="team_withLive">${tableStandings[i].won}</td>
