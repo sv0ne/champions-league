@@ -1,0 +1,182 @@
+///////////////////// ТЕГИ: Default ///////////////////////
+
+body{
+	font-family: -apple-system,BlinkMacSystemFont,Roboto,Segoe UI,Segoe WP,Helvetica Neue,Lucida Grande,Verdana,Tahoma,Arial,sans-serif;
+	font-size: 19px;
+	line-height: 24px;
+	background-color: $black;
+	color: $white;
+	a{
+		color: inherit;
+		&:hover{
+			text-decoration: underline;
+		}
+	}
+	button{
+		font-family: inherit;
+		font-size: inherit;
+		line-height: inherit;
+	}
+}
+
+svg{
+	&.w-24{
+		flex: 0 0 24px;
+		width: 24px;
+		height: 24px;
+		display: block;
+	}
+}
+
+img, video{
+	object-fit: cover;
+}
+
+
+///////////////////// MARGIN-PADDING //////////////////////
+
+.m-4{margin: 4px;}
+.mt-4{margin-top: 4px;}
+.mr-4{margin-right: 4px;}
+.mb-4{margin-bottom: 4px;}
+.ml-4{margin-left: 4px;}
+
+.ml-6{margin-left: 6px;}
+
+.m-8{margin: 8px;}
+.mt-8{margin-top: 8px;}
+.mr-8{margin-right: 8px;}
+.mb-8{margin-bottom: 8px;}
+.ml-8{margin-left: 8px;}
+
+.m-16{margin: 16px;}
+.mt-16{margin-top: 16px;}
+.mr-16{margin-right: 16px;}
+.mb-16{margin-bottom: 16px;}
+.ml-16{margin-left: 16px;}
+
+.m-32{margin: 32px;}
+.mt-32{margin-top: 32px;}
+.mb-32{margin-bottom: 32px;}
+
+.p-8{padding: 8px;}
+.p-16{padding: 16px;}
+.p-0{padding: 0 !important;}
+.p-0-16{padding: 0 16px;}
+.p-16-0{padding: 16px 0;}
+.p-16-8{padding: 16px 8px;}
+.p-8-16{padding: 8px 16px;}
+.p-0-8{padding: 0 8px;}
+
+.nlc-mb-16{
+	> *:not(:last-child){
+		margin-bottom: 16px;
+	}
+}
+
+/////////////// ЧАСТО ИСПОЛЬЗУЕМЫЕ СТИЛИ /////////////////////
+
+.posa{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.text-trim{
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.ta-c{text-align: center;}
+.ta-r{text-align: right;}
+
+.dn{ display: none !important;}
+.md3-dn{
+	@media (max-width:#{$md3}px) {
+	    display: none !important;
+	}
+}
+.md4-dn{
+	@media (max-width:#{$md4}px) {
+	    display: none !important;
+	}
+}
+
+.o-h{overflow: hidden;}
+.ws-n{white-space: nowrap;}
+.w-100{width: 100%;}
+
+//////////////// COLOR, FILL, BACKGROUND //////////////////
+
+.white{color: $white;}
+.red{color: $red;}
+
+///////////////////////// FLEX ////////////////////////////
+
+.d-flex{display: flex;}
+.d-inline-flex{display: inline-flex;}
+.fww{flex-wrap: wrap;}
+.fdc{flex-direction: column;}
+
+.aic{align-items: center;}
+.aifs{align-items: flex-start;}
+.aife{align-items: flex-end;}
+
+.jcc{justify-content: center;}
+.jcfe{justify-content: flex-end;}
+.jcsb{justify-content: space-between;}
+
+.row{
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.f-aic{
+	display: flex;
+	align-items: center;
+}
+
+.f-jcsb{
+	display: flex;
+	justify-content: space-between;
+}
+
+
+.f-jcsb-aic{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.f-jcc-aic{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.col-2{
+	flex: 0 0 50%;
+	@media (max-width:#{$md3}px) {
+	    flex: 0 0 100%;
+	}
+}
+
+.col-3{
+	flex: 0 0 33.333%;
+	@media (max-width:#{$md3}px) {
+	    flex: 0 0 100%;
+	}
+}
+
+.col-4{
+	flex: 0 0 25%;
+	@media (max-width:#{$md2}px) {
+	    flex: 0 0 50%;
+	}
+	@media (max-width:#{$md3}px) {
+	    flex: 0 0 100%;
+	}
+}
