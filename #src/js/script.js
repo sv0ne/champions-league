@@ -46,7 +46,7 @@ $(document).ready(function () {
 			}
 		});
 	}
-	getData();
+	//getData();
 
 	$.get("js/standings.json", (response) => {
 		standings = response;
